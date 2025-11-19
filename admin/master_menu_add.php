@@ -1,2 +1,98 @@
-<?php require_once __DIR__.'/../inc/functions.php'; require_role(['admin']); $errors=[]; if($_SERVER['REQUEST_METHOD']==='POST'){ $kode=$conn->real_escape_string($_POST['kode']); $nama=$conn->real_escape_string($_POST['nama']); $kategori_id = intval($_POST['kategori_id'])?:NULL; $harga=floatval($_POST['harga']); $stok=intval($_POST['stok']); $deskripsi=$conn->real_escape_string($_POST['deskripsi']); $gambar=null; if(isset($_FILES['gambar']) && $_FILES['gambar']['error']===0){ $ext=pathinfo($_FILES['gambar']['name'],PATHINFO_EXTENSION); $allowed=['jpg','jpeg','png','gif']; if(!in_array(strtolower($ext),$allowed)) $errors[]='Format gambar tidak didukung.'; else{ $fn=uniqid('menu_').'.'.$ext; $dst=__DIR__.'/../uploads/'.$fn; if(move_uploaded_file($_FILES['gambar']['tmp_name'],$dst)) $gambar='uploads/'.$fn; } } if(!$kode||!$nama||!$harga) $errors[]='Field wajib diisi.'; if(empty($errors)){ $stmt=$conn->prepare('INSERT INTO menu (kode,nama,kategori_id,harga,stok,deskripsi,gambar) VALUES (?,?,?,?,?,?,?)'); $stmt->bind_param('ssiddss',$kode,$nama,$kategori_id,$harga,$stok,$deskripsi,$gambar); if($stmt->execute()){ flash('msg','Menu ditambahkan'); header('Location:/restoran_fix_v2/admin/master_menu.php'); exit;} else $errors[]='Gagal: '.$conn->error; } } $cats=$conn->query('SELECT * FROM kategori'); ?>
-<!doctype html><html><head><meta charset="utf-8"><title>Tambah Menu</title><link rel="stylesheet" href="/restoran_fix_v2/assets/css/style.css"></head><body><?php include __DIR__.'/../_nav.php'; ?><div class="container card"><h2>Tambah Menu</h2><?php if($errors) echo '<div class="alert">'.implode('<br>',$errors).'</div>'; ?><form method="post" enctype="multipart/form-data"><label>Kode</label><input name="kode" required><label>Nama</label><input name="nama" required><label>Kategori</label><select name="kategori_id"><option value="">-- pilih --</option><?php while($c=$cats->fetch_assoc()): ?><option value="<?=$c['id']?>"><?=htmlspecialchars($c['nama'])?></option><?php endwhile; ?></select><label>Harga</label><input name="harga" type="number" step="100" required><label>Stok</label><input name="stok" type="number" value="0"><label>Deskripsi</label><textarea name="deskripsi"></textarea><label>Gambar</label><input type="file" name="gambar" accept="image/*"><button class="btn" type="submit">Simpan</button></form></div></body></html>
+<?php
+require_once __DIR__ . '/../inc/functions.php';
+require_role(['admin']);
+
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $kode = $conn->real_escape_string($_POST['kode']);
+    $nama = $conn->real_escape_string($_POST['nama']);
+    $kategori_id = intval($_POST['kategori_id']) ?: NULL;
+    $harga = floatval($_POST['harga']);
+    $stok = intval($_POST['stok']);
+    $deskripsi = $conn->real_escape_string($_POST['deskripsi']);
+    $gambar = null;
+    
+    if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === 0) {
+        $ext = pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION);
+        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+        
+        if (!in_array(strtolower($ext), $allowed)) {
+            $errors[] = 'Format gambar tidak didukung.';
+        } else {
+            $fn = uniqid('menu_') . '.' . $ext;
+            $dst = __DIR__ . '/../uploads/' . $fn;
+            
+            if (move_uploaded_file($_FILES['gambar']['tmp_name'], $dst)) {
+                $gambar = 'uploads/' . $fn;
+            }
+        }
+    }
+    
+    if (!$kode || !$nama || !$harga) {
+        $errors[] = 'Field wajib diisi.';
+    }
+    
+    if (empty($errors)) {
+        $stmt = $conn->prepare('INSERT INTO menu (kode,nama,kategori_id,harga,stok,deskripsi,gambar) VALUES (?,?,?,?,?,?,?)');
+        $stmt->bind_param('ssiddss', $kode, $nama, $kategori_id, $harga, $stok, $deskripsi, $gambar);
+        
+        if ($stmt->execute()) {
+            flash('msg', 'Menu ditambahkan');
+            header('Location:/restoran_fix_v2/admin/master_menu.php');
+            exit;
+        } else {
+            $errors[] = 'Gagal: ' . $conn->error;
+        }
+    }
+}
+
+$cats = $conn->query('SELECT * FROM kategori');
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Tambah Menu</title>
+    <link rel="stylesheet" href="/restoran_fix_v2/assets/css/style.css">
+</head>
+<body>
+    <?php include __DIR__ . '/../_nav.php'; ?>
+    
+    <div class="container card">
+        <h2>Tambah Menu</h2>
+        
+        <?php if ($errors) echo '<div class="alert">' . implode('<br>', $errors) . '</div>'; ?>
+        
+        <form method="post" enctype="multipart/form-data">
+            <label>Kode</label>
+            <input name="kode" required>
+            
+            <label>Nama</label>
+            <input name="nama" required>
+            
+            <label>Kategori</label>
+            <select name="kategori_id">
+                <option value="">-- pilih --</option>
+                <?php while ($c = $cats->fetch_assoc()): ?>
+                    <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['nama']) ?></option>
+                <?php endwhile; ?>
+            </select>
+            
+            <label>Harga</label>
+            <input name="harga" type="number" step="100" required>
+            
+            <label>Stok</label>
+            <input name="stok" type="number" value="0">
+            
+            <label>Deskripsi</label>
+            <textarea name="deskripsi"></textarea>
+            
+            <label>Gambar</label>
+            <input type="file" name="gambar" accept="image/*">
+            
+            <button class="btn" type="submit">Simpan</button>
+        </form>
+    </div>
+</body>
+</html>

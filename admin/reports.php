@@ -1,2 +1,70 @@
-<?php require_once __DIR__.'/../inc/functions.php'; require_role(['admin']); $from=$_GET['from']??date('Y-m-01'); $to=$_GET['to']??date('Y-m-d'); $stmt=$conn->prepare('SELECT COUNT(*) AS total_orders, COALESCE(SUM(total),0) AS total_revenue FROM transaksi WHERE DATE(created_at) BETWEEN ? AND ?'); $stmt->bind_param('ss',$from,$to); $stmt->execute(); $summary=$stmt->get_result()->fetch_assoc(); $pm=$conn->prepare('SELECT m.nama, SUM(dt.qty) AS qty_sold, SUM(dt.subtotal) AS revenue FROM detail_transaksi dt JOIN transaksi t ON dt.transaksi_id=t.id JOIN menu m ON dt.menu_id=m.id WHERE DATE(t.created_at) BETWEEN ? AND ? GROUP BY dt.menu_id ORDER BY qty_sold DESC'); $pm->bind_param('ss',$from,$to); $pm->execute(); $menu_res=$pm->get_result(); ?>
-<!doctype html><html><head><meta charset="utf-8"><title>Reports</title><link rel="stylesheet" href="/restoran_fix_v2/assets/css/style.css"></head><body><?php include __DIR__.'/../_nav.php'; ?><div class="container"><h2>Laporan</h2><form method="get" class="card"><label>Dari</label><input type="date" name="from" value="<?=$from?>"><label>Sampai</label><input type="date" name="to" value="<?=$to?>"><button class="btn" type="submit">Filter</button></form><div class="card"><h3>Ringkasan</h3><p>Total Pesanan: <?=$summary['total_orders']?></p><p>Total Revenue: Rp <?=number_format($summary['total_revenue'],0,',','.')?></p></div><div class="card"><h3>Per Menu</h3><table><thead><tr><th>Menu</th><th>Qty</th><th>Revenue</th></tr></thead><tbody><?php while($r=$menu_res->fetch_assoc()): ?><tr><td><?=htmlspecialchars($r['nama'])?></td><td><?=$r['qty_sold']?></td><td>Rp <?=number_format($r['revenue'],0,',','.')?></td></tr><?php endwhile; ?></tbody></table></div></div></body></html>
+<?php
+require_once __DIR__ . '/../inc/functions.php';
+require_role(['admin']);
+
+$from = $_GET['from'] ?? date('Y-m-01');
+$to = $_GET['to'] ?? date('Y-m-d');
+
+$stmt = $conn->prepare('SELECT COUNT(*) AS total_orders, COALESCE(SUM(total),0) AS total_revenue FROM transaksi WHERE DATE(created_at) BETWEEN ? AND ?');
+$stmt->bind_param('ss', $from, $to);
+$stmt->execute();
+$summary = $stmt->get_result()->fetch_assoc();
+
+$pm = $conn->prepare('SELECT m.nama, SUM(dt.qty) AS qty_sold, SUM(dt.subtotal) AS revenue FROM detail_transaksi dt JOIN transaksi t ON dt.transaksi_id=t.id JOIN menu m ON dt.menu_id=m.id WHERE DATE(t.created_at) BETWEEN ? AND ? GROUP BY dt.menu_id ORDER BY qty_sold DESC');
+$pm->bind_param('ss', $from, $to);
+$pm->execute();
+$menu_res = $pm->get_result();
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Reports</title>
+    <link rel="stylesheet" href="/restoran_fix_v2/assets/css/style.css">
+</head>
+<body>
+    <?php include __DIR__ . '/../_nav.php'; ?>
+    
+    <div class="container">
+        <h2>Laporan</h2>
+        
+        <form method="get" class="card">
+            <label>Dari</label>
+            <input type="date" name="from" value="<?= $from ?>">
+            
+            <label>Sampai</label>
+            <input type="date" name="to" value="<?= $to ?>">
+            
+            <button class="btn" type="submit">Filter</button>
+        </form>
+        
+        <div class="card">
+            <h3>Ringkasan</h3>
+            <p>Total Pesanan: <?= $summary['total_orders'] ?></p>
+            <p>Total Revenue: Rp <?= number_format($summary['total_revenue'], 0, ',', '.') ?></p>
+        </div>
+        
+        <div class="card">
+            <h3>Per Menu</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Menu</th>
+                        <th>Qty</th>
+                        <th>Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($r = $menu_res->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($r['nama']) ?></td>
+                            <td><?= $r['qty_sold'] ?></td>
+                            <td>Rp <?= number_format($r['revenue'], 0, ',', '.') ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

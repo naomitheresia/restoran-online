@@ -1,2 +1,68 @@
-<?php require_once __DIR__.'/../inc/functions.php'; require_role(['kasir']); if(isset($_GET['setstatus'])){ $id=intval($_GET['id']); $s=$_GET['setstatus']; $stmt=$conn->prepare('UPDATE transaksi SET status=?, updated_at=NOW() WHERE id=?'); $stmt->bind_param('si',$s,$id); $stmt->execute(); flash('msg','Status diperbarui'); header('Location:/restoran_fix_v2/kasir/orders.php'); exit; } $res=$conn->query('SELECT t.*, u.fullname FROM transaksi t JOIN users u ON t.user_id=u.id ORDER BY t.created_at DESC'); ?>
-<!doctype html><html><head><meta charset="utf-8"><title>Kelola Pesanan</title><link rel="stylesheet" href="/restoran_fix_v2/assets/css/style.css"></head><body><?php include __DIR__.'/../_nav.php'; ?><div class="container"><h2>Kelola Pesanan</h2><?php if($m=flash('msg')) echo '<div class="alert">'.$m.'</div>'; ?><table><thead><tr><th>#</th><th>Order</th><th>Pelanggan</th><th>Total</th><th>Status</th><th>Tgl</th><th>Aksi</th></tr></thead><tbody><?php while($o=$res->fetch_assoc()): ?><tr><td><?=$o['id']?></td><td><?=$o['order_code']?></td><td><?=htmlspecialchars($o['fullname'])?></td><td>Rp <?=number_format($o['total'],0,',','.')?></td><td><?=$o['status']?></td><td><?=$o['created_at']?></td><td><a class="btn" href="/restoran_fix_v2/kasir/order_view.php?id=<?=$o['id']?>">Lihat</a><?php if($o['status']!='selesai'): ?> <a class="btn" href="?id=<?=$o['id']?>&setstatus=proses">Proses</a> <a class="btn" href="?id=<?=$o['id']?>&setstatus=selesai">Selesai</a><?php endif; ?></td></tr><?php endwhile; ?></tbody></table></div></body></html>
+<?php
+require_once __DIR__ . '/../inc/functions.php';
+require_role(['kasir']);
+
+if (isset($_GET['setstatus'])) {
+    $id = intval($_GET['id']);
+    $s = $_GET['setstatus'];
+    
+    $stmt = $conn->prepare('UPDATE transaksi SET status=?, updated_at=NOW() WHERE id=?');
+    $stmt->bind_param('si', $s, $id);
+    $stmt->execute();
+    flash('msg', 'Status diperbarui');
+    header('Location:/restoran_fix_v2/kasir/orders.php');
+    exit;
+}
+
+$res = $conn->query('SELECT t.*, u.fullname FROM transaksi t JOIN users u ON t.user_id=u.id ORDER BY t.created_at DESC');
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Kelola Pesanan</title>
+    <link rel="stylesheet" href="/restoran_fix_v2/assets/css/style.css">
+</head>
+<body>
+    <?php include __DIR__ . '/../_nav.php'; ?>
+    
+    <div class="container">
+        <h2>Kelola Pesanan</h2>
+        
+        <?php if ($m = flash('msg')) echo '<div class="alert">' . $m . '</div>'; ?>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Order</th>
+                    <th>Pelanggan</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Tgl</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($o = $res->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= $o['id'] ?></td>
+                        <td><?= $o['order_code'] ?></td>
+                        <td><?= htmlspecialchars($o['fullname']) ?></td>
+                        <td>Rp <?= number_format($o['total'], 0, ',', '.') ?></td>
+                        <td><?= $o['status'] ?></td>
+                        <td><?= $o['created_at'] ?></td>
+                        <td>
+                            <a class="btn" href="/restoran_fix_v2/kasir/order_view.php?id=<?= $o['id'] ?>">Lihat</a>
+                            <?php if ($o['status'] != 'selesai'): ?>
+                                <a class="btn" href="?id=<?= $o['id'] ?>&setstatus=proses">Proses</a>
+                                <a class="btn" href="?id=<?= $o['id'] ?>&setstatus=selesai">Selesai</a>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
