@@ -1,0 +1,13 @@
+:root{--green:#00a65a;--green-dark:#0b7a49;--bg:#f7f9f8;--card:#fff}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);margin:0;color:#222}
+.topbar{background:var(--green);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:700;font-size:20px}
+.navlinks a{color:#fff;margin-left:12px;text-decoration:none;padding:8px 10px;border-radius:6px}
+.container{max-width:1100px;margin:20px auto;padding:12px}
+.card{background:var(--card);padding:12px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.06);margin-top:12px}
+.btn{background:var(--green);color:#fff;padding:8px 12px;border-radius:8px;border:none;text-decoration:none;display:inline-block}
+table{width:100%;border-collapse:collapse;margin-top:12px;background:var(--card);border-radius:8px;overflow:hidden}
+table th{background:linear-gradient(90deg,var(--green),var(--green-dark));color:#fff;padding:10px;text-align:left}
+input,textarea,select{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;margin-bottom:8px}
+.auth-box{width:420px;margin:60px auto;background:var(--card);padding:20px;border-radius:10px}
+.alert{padding:10px;background:#e9f7ef;border-left:4px solid var(--green);margin-bottom:12px;border-radius:6px}
