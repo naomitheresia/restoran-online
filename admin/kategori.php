@@ -1,8 +1,70 @@
-<?php 
-require_once __DIR__.'/../inc/functions.php'; 
-require_role(['admin']); if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['nama'])){ $n=$conn->real_escape_string($_POST['nama']); if($n){ $stmt=$conn->prepare('INSERT INTO kategori (nama) VALUES (?)'); $stmt->bind_param('s',$n); $stmt->execute(); flash('msg','Kategori ditambahkan'); header('Location:/restoran_fix_v2/admin/kategori.php'); exit; } } if(isset($_GET['delete'])){ $id=intval($_GET['delete']); $stmt=$conn->prepare('DELETE FROM kategori WHERE id=?'); $stmt->bind_param('i',$id); $stmt->execute(); flash('msg','Kategori dihapus'); header('Location:/restoran_fix_v2/admin/kategori.php'); exit; } $res=$conn->query('SELECT * FROM kategori'); ?>
-<!doctype 
-html>
+<?php
+require_once __DIR__ . '/../inc/functions.php';
+require_role(['admin']);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nama'])) {
+    $n = $conn->real_escape_string($_POST['nama']);
+    
+    if ($n) {
+        $stmt = $conn->prepare('INSERT INTO kategori (nama) VALUES (?)');
+        $stmt->bind_param('s', $n);
+        $stmt->execute();
+        flash('msg', 'Kategori ditambahkan');
+        header('Location:/restoran_fix_v2/admin/kategori.php');
+        exit;
+    }
+}
+
+if (isset($_GET['delete'])) {
+    $id = intval($_GET['delete']);
+    $stmt = $conn->prepare('DELETE FROM kategori WHERE id=?');
+    $stmt->bind_param('i', $id);
+    $stmt->execute();
+    flash('msg', 'Kategori dihapus');
+    header('Location:/restoran_fix_v2/admin/kategori.php');
+    exit;
+}
+
+$res = $conn->query('SELECT * FROM kategori');
+?>
+<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8"><title>Kategori</title><link rel="stylesheet" href="/restoran_fix_v2/assets/css/style.css"></head><body><?php include __DIR__.'/../_nav.php'; ?><div class="container card"><h2>Kategori</h2><?php if($m=flash('msg')) echo '<div class="alert">'.$m.'</div>'; ?><form method="post"><input name="nama" placeholder="Nama kategori"><button class="btn" type="submit">Tambah</button></form><table><thead><tr><th>#</th><th>Nama</th><th>Aksi</th></tr></thead><tbody><?php while($r=$res->fetch_assoc()): ?><tr><td><?=$r['id']?></td><td><?=htmlspecialchars($r['nama'])?></td><td><a class="btn danger" href="?delete=<?=$r['id']?>" onclick="return confirm('Hapus?')">Hapus</a></td></tr><?php endwhile; ?></tbody></table></div></body></html>
+<head>
+    <meta charset="utf-8">
+    <title>Kategori</title>
+    <link rel="stylesheet" href="/restoran_fix_v2/assets/css/style.css">
+</head>
+<body>
+    <?php include __DIR__ . '/../_nav.php'; ?>
+    
+    <div class="container card">
+        <h2>Kategori</h2>
+        
+        <?php if ($m = flash('msg')) echo '<div class="alert">' . $m . '</div>'; ?>
+        
+        <form method="post">
+            <input name="nama" placeholder="Nama kategori">
+            <button class="btn" type="submit">Tambah</button>
+        </form>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nama</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($r = $res->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= $r['id'] ?></td>
+                        <td><?= htmlspecialchars($r['nama']) ?></td>
+                        <td><a class="btn danger" href="?delete=<?= $r['id'] ?>" onclick="return confirm('Hapus?')">Hapus</a></td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
