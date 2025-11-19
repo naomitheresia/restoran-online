@@ -1,4 +1,4 @@
--- db_restoran.sql (restoran_fix_v2)
+
 DROP DATABASE IF EXISTS restoran;
 CREATE DATABASE restoran CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE restoran;
@@ -62,7 +62,7 @@ INSERT INTO menu (kode,nama,kategori_id,harga,stok,deskripsi) VALUES
 ('M002','Mie Ayam',1,20000,15,'Mie ayam'),
 ('D001','Es Teh Manis',2,8000,50,'Es teh');
 
--- Default users (passwords plain for easy login; registration will hash new ones)
+-- Default users 
 INSERT INTO `users` (`username`, `password`, `fullname`, `email`, `phone`, `role`, `created_at`) VALUES
 ('admin','admin123','Admin Utama','admin@resto.com','081100000000','admin', '2025-11-13 10:03:34'),
 ('kasir','kasir123','Kasir Resto','kasir@resto.com','081122233344','kasir', '2025-11-13 10:05:00'),

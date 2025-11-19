@@ -56,12 +56,13 @@ $stats = [
     <!-- QUICK ACTIONS -->
     <div class="box">
         <h3>Quick Actions</h3>
-        <div class="grid4">
-            <a href="/restoran_fix_v2/admin/users.php" class="action-btn green">Kelola Users</a>
-            <a href="/restoran_fix_v2/admin/menu.php" class="action-btn blue">Kelola Menu</a>
-            <a href="/restoran_fix_v2/admin/kategori.php" class="action-btn purple">Kategori</a>
-            <a href="/restoran_fix_v2/admin/reports.php" class="action-btn orange">Reports</a>
-        </div>
+       <div class="grid4">
+    <a href="users.php" class="action-btn green">Kelola Users</a>
+    <a href="master_menu.php" class="action-btn blue">Kelola Menu</a>
+    <a href="kategori.php" class="action-btn purple">Kategori</a>
+    <a href="reports.php" class="action-btn orange">Reports</a>
+</div>
+
     </div>
 
     <!-- SYSTEM -->
