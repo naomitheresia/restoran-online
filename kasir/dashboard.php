@@ -1,0 +1,2 @@
+<?php require_once __DIR__.'/../inc/functions.php'; require_role(['kasir']); $user=current_user(); ?>
+<!doctype html><html><head><meta charset="utf-8"><title>Kasir</title><link rel="stylesheet" href="/restoran_fix_v2/assets/css/style.css"></head><body><?php include __DIR__.'/../_nav.php'; ?><div class="container"><div class="card"><h2>Kasir - <?=htmlspecialchars($user['fullname'])?></h2></div><div class="card"><a class="btn" href="/restoran_fix_v2/kasir/orders.php">Kelola Pesanan</a></div></div></body></html>
